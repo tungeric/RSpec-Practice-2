@@ -2,8 +2,14 @@
 #
 # Write a method `factors(num)` that returns an array containing all the
 # factors of a given number.
+require 'byebug'
 
 def factors(num)
+  factor_array=[]
+  1.upto(num) do |x|
+    factor_array << x if num%x==0
+  end
+  factor_array
 end
 
 # ### Bubble Sort
@@ -45,11 +51,33 @@ end
 #
 # http://stackoverflow.com/questions/827649/what-is-the-ruby-spaceship-operator
 
+
 class Array
-  def bubble_sort!
+  def bubble_sort!(&prc)
+    array_length = length
+    swapped=true
+    while swapped == true
+      swapped=false
+      (0...array_length-1).each do |x|
+        if prc.nil?
+          if self[x]>self[x+1]
+            swapped=true
+            self[x],self[x+1]=self[x+1],self[x]
+          end
+        else
+          if yield(self[x],self[x+1])==1
+            self[x],self[x+1]=self[x+1],self[x]
+            swapped=true
+          end
+        end
+      end
+    end
+    self
   end
 
   def bubble_sort(&prc)
+    temp = self.dup
+    temp.bubble_sort!(&prc)
   end
 end
 
@@ -70,6 +98,11 @@ def substrings(string)
 end
 
 def subwords(word, dictionary)
+  word_found_array=[]
+  dictionary.each do |sub|
+    word_found_array << sub if word.include?(sub)
+  end
+  word_found_array
 end
 
 # ### Doubler
@@ -77,6 +110,7 @@ end
 # array with the original elements multiplied by two.
 
 def doubler(array)
+  doubled_array=array.map {|x| x*2}
 end
 
 # ### My Each
@@ -104,6 +138,12 @@ end
 
 class Array
   def my_each(&prc)
+    idx=0
+    while idx<self.length
+      prc.call(self[idx])
+      idx+=1
+    end
+    self
   end
 end
 
@@ -122,12 +162,22 @@ end
 
 class Array
   def my_map(&prc)
+    new_array=[]
+    my_each { |x| new_array << prc.call(x)}
+    new_array
   end
 
   def my_select(&prc)
+    new_array=[]
+    my_each { |x| new_array << x if prc.call(x)==true }
+    new_array
   end
 
   def my_inject(&blk)
+    temp = dup
+    acc = temp.shift
+    temp.my_each { |num| acc = blk.call(acc,num)}
+    acc
   end
 end
 
@@ -141,4 +191,5 @@ end
 # ```
 
 def concatenate(strings)
+  strings.inject { |acc,word| "#{acc}#{word}"}
 end

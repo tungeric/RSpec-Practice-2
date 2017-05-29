@@ -31,9 +31,7 @@
 #
 # ```ruby
 # # Example calls to eval_block
-# eval_block("Kerry", "Washington", 23) do |fname, lname, score|
-#   puts "#{lname}, #{fname} won #{score} votes."
-# end
+# p
 # # Washington, Kerry won 23 votes.
 # # => nil
 #
@@ -45,3 +43,7 @@
 # eval_block(1, 2, 3)
 # # => "NO BLOCK GIVEN"
 # ```
+def eval_block(*arg, &block_arg)
+  raise "NO BLOCK GIVEN!" if block_arg.nil?
+  yield(*arg)
+end
